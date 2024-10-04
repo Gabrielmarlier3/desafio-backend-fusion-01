@@ -7,6 +7,7 @@ import { SequelizeModule } from "@nestjs/sequelize";
 @Module({
   imports: [SequelizeModule.forFeature([StarSystemsModel])],
   providers: [StarSystemsService],
-  controllers: [StarSystemsController]
+  controllers: [StarSystemsController],
+  exports: [StarSystemsService]
 })
 export class StarSystemsModule {}

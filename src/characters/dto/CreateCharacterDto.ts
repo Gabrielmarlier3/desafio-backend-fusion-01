@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCharacterDto {
     @IsString()
@@ -14,7 +14,7 @@ export class CreateCharacterDto {
     affiliation: string;
 
 
-    @IsString()
+    @IsInt()
     @IsNotEmpty()
-    homeworldName: string;
+    homeworldId: number;
 }

@@ -12,7 +12,7 @@ export class CharactersController {
     }
     @Post()
     async create(@Body() createCharacterDto: CreateCharacterDto) {
-        await this.service.create(createCharacterDto);
+        await this.service.createCharacter(createCharacterDto);
     }
 
     @Get()
@@ -21,8 +21,8 @@ export class CharactersController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: number) {
-        return this.service.getCharacterById(id);
+    findOne(@Param('id') id: string) {
+        return this.service.getCharacterById(Number(id));
     }
 
     @Put(':id')
@@ -32,6 +32,6 @@ export class CharactersController {
 
     @Delete(':id')
     remove(@Param('id') id: string) {
-        // lógica para deletar um personagem
+        return this.service.deleteCharacter(Number(id));
     }
 }

@@ -1,31 +1,36 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
 import { AuthGuard } from "@nestjs/passport";
+import { StarSystemsService } from "./star-systems.service";
+import { CreateStarSystemDTO } from "./dto/CreateStarSystemDTO";
+import { UpdateStarSystemDTO } from "./dto/UpdateStarSystemDTO";
 
 @Controller('star-systems')
 @UseGuards(AuthGuard('jwt'))
 export class StarSystemsController {
+    constructor(private readonly starSystemsService: StarSystemsService){
+    }
     @Post()
-    create(@Body() createStarSystemDto: any) {
-        // lógica para criar um novo sistema estelar
+    async create(@Body() createStarSystemDto: CreateStarSystemDTO) {
+        await this.starSystemsService.createStarSystem(createStarSystemDto)
     }
 
     @Get()
-    findAll() {
-        // lógica para listar todos os sistemas estelares
+    async findAll() {
+       return  await this.starSystemsService.getAllStarSystems()
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        // lógica para obter detalhes de um sistema estelar específico
+    async findOne(@Param('id') id: string) {
+       return  await this.starSystemsService.getStarSystemById(Number(id))
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() updateStarSystemDto: any) {
-        // lógica para atualizar informações de um sistema estelar
+    async update(@Param('id') id: string, @Body() updateStarSystemDto: UpdateStarSystemDTO) {
+        await this.starSystemsService.updateStarSystem(Number(id), updateStarSystemDto)
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        // lógica para deletar um sistema estelar
+    async remove(@Param('id') id: string) {
+        await this.starSystemsService.deleteStarSystem(Number(id))
     }
 }

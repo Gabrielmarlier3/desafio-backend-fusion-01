@@ -1,4 +1,4 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class UpdateCharacterDto {
     @IsOptional()
@@ -14,6 +14,6 @@ export class UpdateCharacterDto {
     affiliation?: string;
 
     @IsOptional()
-    @IsString()
-    homeworldName?: string;
+    @IsNumber()
+    homeworldName?: number;
 }

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from "sequelize-typescript";
 import { InjectModel } from "@nestjs/sequelize";
 import { CharactersModel } from "./characters.model";
 import { ICreateCharacter } from "./interface/ICreateCharacter";
 import { PlanetsService } from "../planets/planets.service";
+import { IUpdateCharacter } from "./interface/IUpdateCharacter";
 
 @Injectable()
 export class CharactersService {
@@ -12,14 +12,13 @@ export class CharactersService {
         private planetService: PlanetsService
     ){}
 
-    async create(character: ICreateCharacter){
-        const { homeworldName, ...characterData } = character;
-        const planet = await this.planetService.getPlanetByName(homeworldName);
+    async createCharacter(character: ICreateCharacter){
+        await this.planetService.getPlanetById(character.homeworldId);
         return await this.characterModel.create({
-            name: characterData.name,
-            race: characterData.race,
-            affiliation: characterData.affiliation,
-            homeworldId: planet.id
+            name: character.name,
+            race: character.race,
+            affiliation: character.affiliation,
+            homeworldId: character.homeworldId
         });
     }
 
@@ -28,11 +27,19 @@ export class CharactersService {
     }
 
     async getCharacterById(id: number){
-        return await this.characterModel.findByPk(id);
+        try {
+            return await this.characterModel.findByPk(id);
+        } catch (e) {
+            throw new Error('Character not found');
+        }
     }
 
-    async updateCharacter(id: number, character: ICreateCharacter){
+    async updateCharacter(id: number, character: IUpdateCharacter){
         return await this.characterModel.update(character, {where: {id}});
+    }
+
+    async deleteCharacter(id: number){
+        return await this.characterModel.destroy({where: {id}});
     }
 
 }

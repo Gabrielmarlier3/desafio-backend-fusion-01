@@ -1,31 +1,38 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
 import { AuthGuard } from "@nestjs/passport";
+import { CreatePlanetDto } from "./dto/CreatePlanetDto";
+import { PlanetsService } from "./planets.service";
+import { UpdatePlanetDto } from "./dto/UpdatePlanetDto";
 
 @Controller('planets')
 @UseGuards(AuthGuard('jwt'))
 export class PlanetsController {
-  @Post()
-  create(@Body() createPlanetDto: any) {
-    // lógica para criar um novo planeta
-  }
+    constructor(private service: PlanetsService){
 
-  @Get()
-  findAll() {
-    // lógica para listar todos os planetas
-  }
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    // lógica para obter detalhes de um planeta específico
-  }
+    @Post()
+    async create(@Body() createPlanetDto: CreatePlanetDto){
+        await this.service.createPlanet(createPlanetDto)
+    }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updatePlanetDto: any) {
-    // lógica para atualizar informações de um planeta
-  }
+    @Get()
+    async findAll(){
+        return await this.service.getAllPlanets();
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    // lógica para deletar um planeta
-  }
+    @Get(':id')
+    async findOne(@Param('id') id: string){
+        return await this.service.getPlanetById(Number(id));
+    }
+
+    @Put(':id')
+    async update(@Param('id') id: string, @Body() updatePlanetDto: UpdatePlanetDto){
+        return await this.service.updatePlanet(Number(id), updatePlanetDto);
+    }
+
+    @Delete(':id')
+    async remove(@Param('id') id: string){
+        await this.service.deletePlanet(Number(id));
+    }
 }
