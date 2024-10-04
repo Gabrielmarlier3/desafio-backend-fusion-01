@@ -1,27 +1,33 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
 import { AuthGuard } from "@nestjs/passport";
+import { ICreateCharacter } from "./interface/ICreateCharacter";
+import { CharactersService } from "./characters.service";
+import { CreateCharacterDto } from "./dto/CreateCharacterDto";
+import { UpdateCharacterDto } from "./dto/UpdateCharacterDto";
 
 @Controller('characters')
 @UseGuards(AuthGuard('jwt'))
 export class CharactersController {
+    constructor(private service: CharactersService) {
+    }
     @Post()
-    create(@Body() createCharacterDto: any) {
-        // lógica para criar um novo personagem
+    async create(@Body() createCharacterDto: CreateCharacterDto) {
+        await this.service.create(createCharacterDto);
     }
 
     @Get()
     findAll() {
-        // lógica para listar todos os personagens
+        return this.service.getAllCharacters();
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        // lógica para obter detalhes de um personagem específico
+    findOne(@Param('id') id: number) {
+        return this.service.getCharacterById(id);
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() updateCharacterDto: any) {
-        // lógica para atualizar informações de um personagem
+    async update(@Param('id') id: number, @Body() updateCharacterDto: UpdateCharacterDto) {
+        await this.service.updateCharacter(id, updateCharacterDto);
     }
 
     @Delete(':id')
