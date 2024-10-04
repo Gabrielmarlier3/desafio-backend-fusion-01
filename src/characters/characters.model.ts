@@ -1,8 +1,8 @@
 import { Table, Column, Model, DataType, ForeignKey } from 'sequelize-typescript';
-import { Planet } from '../planets/planets.model';
+import { PlanetModel } from '../planets/planets.model';
 
-@Table
-export class Character extends Model<Character> {
+@Table({ tableName: 'Characters' })
+export class CharactersModel extends Model<CharactersModel> {
     @Column({
         type: DataType.STRING,
         allowNull: false,
@@ -21,7 +21,7 @@ export class Character extends Model<Character> {
     })
     affiliation: string;
 
-    @ForeignKey(() => Planet)
+    @ForeignKey(() => PlanetModel)
     @Column({
         type: DataType.INTEGER,
         allowNull: false,

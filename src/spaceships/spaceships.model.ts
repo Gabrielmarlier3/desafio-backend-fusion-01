@@ -1,7 +1,7 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
-@Table
-export class Spaceship extends Model<Spaceship> {
+@Table({ tableName: 'Spaceships' })
+export class SpaceshipModel extends Model<SpaceshipModel> {
     @Column({
         type: DataType.STRING,
         allowNull: false,

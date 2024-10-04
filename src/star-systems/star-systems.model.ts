@@ -1,8 +1,8 @@
 import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
-import { Planet } from '../planets/planets.model';
+import { PlanetModel } from '../planets/planets.model';
 
-@Table
-export class StarSystem extends Model<StarSystem> {
+@Table({ tableName: 'StarSystems' })
+export class StarSystemsModel extends Model<StarSystemsModel> {
     @Column({
         type: DataType.STRING,
         allowNull: false,
@@ -15,6 +15,6 @@ export class StarSystem extends Model<StarSystem> {
     })
     description: string;
 
-    @HasMany(() => Planet)
-    planets: Planet[];
+    @HasMany(() => PlanetModel)
+    planets: PlanetModel[];
 }

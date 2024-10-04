@@ -1,7 +1,8 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { StarSystemsModel } from '../star-systems/star-systems.model';
 
-@Table
-export class Planet extends Model<Planet> {
+@Table({ tableName: 'Planets' })
+export class PlanetModel extends Model<PlanetModel> {
     @Column({
         type: DataType.STRING,
         allowNull: false,
@@ -9,20 +10,18 @@ export class Planet extends Model<Planet> {
     name: string;
 
     @Column({
-        type: DataType.STRING,
+        type: DataType.TEXT,
         allowNull: false,
     })
-    climate: string;
+    description: string;
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    terrain: string;
-
+    @ForeignKey(() => StarSystemsModel)
     @Column({
         type: DataType.INTEGER,
         allowNull: false,
     })
-    population: number;
+    starSystemId: number;
+
+    @BelongsTo(() => StarSystemsModel)
+    starSystem: StarSystemsModel;
 }
