@@ -3,7 +3,10 @@ import { AuthGuard } from "@nestjs/passport";
 import { StarSystemsService } from "./star-systems.service";
 import { CreateStarSystemDTO } from "./dto/CreateStarSystemDTO";
 import { UpdateStarSystemDTO } from "./dto/UpdateStarSystemDTO";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('star-systems')
+@ApiBearerAuth('JWT-auth')
 @Controller('star-systems')
 @UseGuards(AuthGuard('jwt'))
 export class StarSystemsController {

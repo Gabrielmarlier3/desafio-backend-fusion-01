@@ -1,6 +1,9 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
 import { AuthGuard } from "@nestjs/passport";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('spaceships')
+@ApiBearerAuth('JWT-auth')
 @Controller('spaceships')
 @UseGuards(AuthGuard('jwt'))
 export class SpaceshipsController {

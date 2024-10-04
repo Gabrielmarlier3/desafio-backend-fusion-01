@@ -3,7 +3,10 @@ import { AuthGuard } from "@nestjs/passport";
 import { CreatePlanetDto } from "./dto/CreatePlanetDto";
 import { PlanetsService } from "./planets.service";
 import { UpdatePlanetDto } from "./dto/UpdatePlanetDto";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('planets')
+@ApiBearerAuth('JWT-auth')
 @Controller('planets')
 @UseGuards(AuthGuard('jwt'))
 export class PlanetsController {

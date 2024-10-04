@@ -6,8 +6,11 @@ import { SequelizeModule } from "@nestjs/sequelize";
 import { PlanetsModule } from "../planets/planets.module";
 
 @Module({
-  imports: [SequelizeModule.forFeature([CharactersModel])],
-  providers: [CharactersService, PlanetsModule],
+  imports: [
+      SequelizeModule.forFeature([CharactersModel]),
+      PlanetsModule
+  ],
+  providers: [CharactersService],
   controllers: [CharactersController]
 })
 export class CharactersModule {}

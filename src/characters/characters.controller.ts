@@ -4,7 +4,10 @@ import { ICreateCharacter } from "./interface/ICreateCharacter";
 import { CharactersService } from "./characters.service";
 import { CreateCharacterDto } from "./dto/CreateCharacterDto";
 import { UpdateCharacterDto } from "./dto/UpdateCharacterDto";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('characters')
+@ApiBearerAuth('JWT-auth')
 @Controller('characters')
 @UseGuards(AuthGuard('jwt'))
 export class CharactersController {
