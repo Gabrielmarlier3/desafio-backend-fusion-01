@@ -10,11 +10,12 @@ export class StarSystemsService {
     }
 
     async getStarSystemById(id: number){
-        try {
-            await this.starSystemModel.findOne({ where: { id } })
-        } catch (e) {
+        const starSystem = await this.starSystemModel.findOne({ where: { id } })
+        if ( !starSystem ) {
             throw new Error('Star System not found')
         }
+        return starSystem
+
     }
 
     async getAllStarSystems(){
@@ -26,20 +27,24 @@ export class StarSystemsService {
     }
 
     async updateStarSystem(id: number, data: IUpdateStarSystem){
-        await this.starSystemModel.update(data, { where: { id } })
+        try {
+            await this.starSystemModel.update(data, { where: { id } })
+        } catch (e) {
+            throw new Error('Star System not found')
+        }
     }
 
-  async deleteStarSystem(id: number){
-    const transaction = await this.starSystemModel.sequelize.transaction();
-    try {
-        await this.starSystemModel.sequelize.models.Planet.destroy({ where: { starSystemId: id }, transaction });
+    async deleteStarSystem(id: number){
+        const transaction = await this.starSystemModel.sequelize.transaction();
+        try {
+            await this.starSystemModel.sequelize.models.Planet.destroy({ where: { starSystemId: id }, transaction });
 
-        await this.starSystemModel.destroy({ where: { id }, transaction });
+            await this.starSystemModel.destroy({ where: { id }, transaction });
 
-        await transaction.commit();
-    } catch (error) {
-        await transaction.rollback();
-        throw error;
+            await transaction.commit();
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
+        }
     }
-}
 }

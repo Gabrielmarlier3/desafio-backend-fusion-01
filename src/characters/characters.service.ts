@@ -10,7 +10,8 @@ export class CharactersService {
     constructor(
         @InjectModel(CharactersModel) private characterModel: typeof CharactersModel,
         private planetService: PlanetsService
-    ){}
+    ){
+    }
 
     async createCharacter(character: ICreateCharacter){
         await this.planetService.getPlanetById(character.homeworldId);
@@ -27,19 +28,23 @@ export class CharactersService {
     }
 
     async getCharacterById(id: number){
+        const character = await this.characterModel.findByPk(id);
+        if ( !character ) {
+            throw new Error('Character not found');
+        }
+        return character;
+    }
+
+    async updateCharacter(id: number, character: IUpdateCharacter){
         try {
-            return await this.characterModel.findByPk(id);
+            return await this.characterModel.update(character, { where: { id } });
         } catch (e) {
             throw new Error('Character not found');
         }
     }
 
-    async updateCharacter(id: number, character: IUpdateCharacter){
-        return await this.characterModel.update(character, {where: {id}});
-    }
-
     async deleteCharacter(id: number){
-        return await this.characterModel.destroy({where: {id}});
+        return await this.characterModel.destroy({ where: { id } });
     }
 
 }
