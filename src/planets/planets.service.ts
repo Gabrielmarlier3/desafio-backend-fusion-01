@@ -1,63 +1,66 @@
-import { Injectable } from '@nestjs/common';
-import { PlanetModel } from "./planets.model";
-import { InjectModel } from "@nestjs/sequelize";
-import { ICreatePlanet } from "./interface/ICreatePlanet";
-import { StarSystemsService } from "../star-systems/star-systems.service";
-import { IUpdatePlanet } from "./interface/IUpdatePlanet";
+import { Injectable, Logger } from '@nestjs/common';
+import { PlanetModel } from './planets.model';
+import { InjectModel } from '@nestjs/sequelize';
+import { ICreatePlanet } from './interface/ICreatePlanet';
+import { StarSystemsService } from '../star-systems/star-systems.service';
+import { IUpdatePlanet } from './interface/IUpdatePlanet';
 
 @Injectable()
 export class PlanetsService {
-    constructor(
-        @InjectModel(PlanetModel) private planetModel: typeof PlanetModel,
-        private starSystemService: StarSystemsService
-    ){
+  constructor(
+    @InjectModel(PlanetModel) private planetModel: typeof PlanetModel,
+    private starSystemService: StarSystemsService,
+  ) {}
+
+  logger = new Logger(PlanetsService.name);
+
+  async getPlanetById(id: number): Promise<PlanetModel> {
+    const planet = await this.planetModel.findByPk(id);
+    if (!planet) {
+      throw new Error('Planet not found');
     }
+    return planet;
+  }
 
-    async getPlanetById(id: number){
+  async createPlanet(createPlanet: ICreatePlanet): Promise<void> {
+    const { starSystemId, ...createPlanetData } = createPlanet;
+    await this.starSystemService.getStarSystemById(starSystemId);
+    await this.planetModel.create({
+      name: createPlanetData.name,
+      description: createPlanetData.description,
+      starSystemId,
+    });
+  }
 
-        const planet = await this.planetModel.findByPk(id);
-        if ( !planet ) {
-            throw new Error('Planet not found');
-        }
-        return planet;
+  async getAllPlanets(): Promise<PlanetModel[]> {
+    return await this.planetModel.findAll();
+  }
+
+  async updatePlanet(id: number, updatePlanet: IUpdatePlanet): Promise<void> {
+    const { starSystemId } = updatePlanet;
+    await this.starSystemService.getStarSystemById(starSystemId);
+    try {
+      await this.planetModel.update(updatePlanet, { where: { id } });
+    } catch (e) {
+      this.logger.error(e);
+      throw new Error('Planet not found');
     }
+  }
 
-    async createPlanet(createPlanet: ICreatePlanet){
-        const { starSystemId, ...createPlanetData } = createPlanet;
-        await this.starSystemService.getStarSystemById(starSystemId);
-        return await this.planetModel.create({
-            name: createPlanetData.name,
-            description: createPlanetData.description,
-            starSystemId
-        });
+  async deletePlanet(id: number) {
+    const transaction = await this.planetModel.sequelize.transaction();
+    try {
+      await this.planetModel.sequelize.models.Character.destroy({
+        where: { homeworldId: id },
+        transaction,
+      });
+
+      await this.planetModel.destroy({ where: { id }, transaction });
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
     }
-
-    async getAllPlanets(){
-        return await this.planetModel.findAll();
-    }
-
-    async updatePlanet(id: number, updatePlanet: IUpdatePlanet){
-        const { starSystemId } = updatePlanet;
-        await this.starSystemService.getStarSystemById(starSystemId);
-        try {
-            return await this.planetModel.update(updatePlanet, { where: { id } });
-        } catch (e) {
-            throw new Error('Planet not found');
-        }
-    }
-
-    async deletePlanet(id: number){
-        const transaction = await this.planetModel.sequelize.transaction();
-        try {
-            await this.planetModel.sequelize.models.Character.destroy({ where: { homeworldId: id }, transaction });
-
-            await this.planetModel.destroy({ where: { id }, transaction });
-
-            await transaction.commit();
-        } catch (error) {
-            await transaction.rollback();
-            throw error;
-        }
-    }
-
+  }
 }

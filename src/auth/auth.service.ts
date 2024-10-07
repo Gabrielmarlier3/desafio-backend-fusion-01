@@ -3,11 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly jwtService: JwtService) {}
 
-    async generateToken() {
-        return {
-            access_token: this.jwtService.sign({ user: 'josé' }),
-        };
-    }
+  async generateToken() {
+    return {
+      access_token: this.jwtService.sign({ user: 'josé' }),
+    };
+  }
 }
